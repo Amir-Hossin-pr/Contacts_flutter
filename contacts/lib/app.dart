@@ -1,4 +1,5 @@
 import 'package:contacts/screens/home_screen.dart';
+import 'package:contacts/utils/network.dart';
 import 'package:flutter/material.dart';
 
 class App extends StatelessWidget {
