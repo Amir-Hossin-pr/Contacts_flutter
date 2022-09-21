@@ -12,11 +12,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
-    Network.getData();
-    Future.delayed(Duration(seconds: 5)).then((value) {
-      setState(() {});
-    });
     super.initState();
+    Network.getData().then((value) {
+      if (value) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -27,11 +28,10 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Contacts Online'),
         actions: [
           IconButton(
-              onPressed: () {
-                Network.getData();
-                Future.delayed(Duration(seconds: 5)).then((value) {
+              onPressed: () async {
+                if (await Network.getData()) {
                   setState(() {});
-                });
+                }
               },
               icon: const Icon(Icons.refresh))
         ],
@@ -39,7 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (builder) => const UpsertScreen()));
+                  MaterialPageRoute(builder: (builder) => const UpsertScreen()))
+              .then((value) async {
+            await Network.getData();
+            setState(() {});
+          });
         },
         child: const Icon(Icons.add),
       ),
@@ -50,7 +54,20 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text('${index + 1}'),
             ),
             trailing: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                var contact = Network.contacts[index];
+                UpsertScreen.fullName.text = contact.fullName;
+                UpsertScreen.mobileNo.text = contact.mobileNo;
+                UpsertScreen.contactId = contact.id;
+                Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const UpsertScreen()))
+                    .then((value) async {
+                  await Network.getData();
+                  setState(() {});
+                });
+              },
               icon: const Icon(Icons.edit),
             ),
             title: Text(Network.contacts[index].fullName),
@@ -69,14 +86,32 @@ class _HomeScreenState extends State<HomeScreen> {
                           Padding(
                             padding: const EdgeInsets.all(5),
                             child: ElevatedButton(
-                              onPressed: () {
-                                Network.deleteData(index);
-                                Navigator.pop(context);
+                              onPressed: () async {
+                                var contact = Network.contacts[index];
+                                if (await Network.deleteData(contact.id)) {
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              'User ${contact.fullName} Deleted Successfuly',
+                                              style: const TextStyle(
+                                                  color: Colors.green))));
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                          content: Text(
+                                    'User ${contact.fullName} Not Deleted',
+                                    style: const TextStyle(color: Colors.red),
+                                  )));
+                                }
+                                await Network.getData();
                                 setState(() {});
                               },
                               style: ButtonStyle(
                                   padding: MaterialStateProperty.all(
-                                      const EdgeInsets.all(10))),
+                                      const EdgeInsets.all(10)),
+                                  backgroundColor:
+                                      MaterialStateProperty.all(Colors.red)),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: const [
@@ -105,10 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           )
                         ],
-                      )).then((value) {
-                Network.getData();
-                setState(() {});
-              });
+                      ));
             },
           );
         },
