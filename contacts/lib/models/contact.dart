@@ -1,10 +1,12 @@
 class Contact {
   late final String fullName;
   late final String mobileNo;
+  late final int id;
 
-  Contact({required this.fullName, required this.mobileNo});
+  Contact({required this.fullName, required this.mobileNo, required this.id});
 
   Contact.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     fullName = json['FullName'];
     mobileNo = json['MobileNo'];
   }
