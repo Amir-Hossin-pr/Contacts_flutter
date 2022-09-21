@@ -7,6 +7,7 @@ class UpsertScreen extends StatefulWidget {
 
   static TextEditingController fullName = TextEditingController();
   static TextEditingController mobileNo = TextEditingController();
+  static int contactId = -1;
 
   @override
   State<UpsertScreen> createState() => _UpsertScreenState();
@@ -15,20 +16,28 @@ class UpsertScreen extends StatefulWidget {
 class _UpsertScreenState extends State<UpsertScreen> {
   @override
   Widget build(BuildContext context) {
-    String _title = "Add New Contact";
-    final _formKey = GlobalKey<FormState>();
+    String title = UpsertScreen.contactId == -1
+        ? "Add New Contact"
+        : 'Edit `${UpsertScreen.fullName.text}`';
+
+    final formKey = GlobalKey<FormState>();
 
     return Form(
-        key: _formKey,
+        key: formKey,
         child: Scaffold(
           appBar: AppBar(
-            title: Text(_title),
+            title: Text(title),
             leading: IconButton(
               onPressed: () {
+                UpsertScreen.contactId = -1;
+                UpsertScreen.fullName.text = "";
+                UpsertScreen.mobileNo.text = "";
                 Navigator.pop(context);
               },
               icon: const Icon(Icons.arrow_back),
             ),
+            backgroundColor:
+                UpsertScreen.contactId == -1 ? Colors.blue : Colors.amber,
           ),
           body: Column(
             children: [
@@ -49,12 +58,45 @@ class _UpsertScreenState extends State<UpsertScreen> {
                   style: ButtonStyle(
                       padding:
                           MaterialStateProperty.all(const EdgeInsets.all(15))),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      Network.postData(
-                          mobileNo: UpsertScreen.mobileNo.text,
-                          fullName: UpsertScreen.fullName.text);
-                      Navigator.pop(context);
+                  onPressed: () async {
+                    void clearForm() {
+                      UpsertScreen.contactId = -1;
+                      UpsertScreen.fullName.text = "";
+                      UpsertScreen.mobileNo.text = "";
+                    }
+
+                    void showSnackbar(String message, bool success) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                        message,
+                        style: TextStyle(
+                            color: success ? Colors.green : Colors.red),
+                      )));
+                    }
+
+                    if (formKey.currentState!.validate()) {
+                      if (UpsertScreen.contactId == -1) {
+                        if (await Network.postData(
+                            mobileNo: UpsertScreen.mobileNo.text,
+                            fullName: UpsertScreen.fullName.text)) {
+                          showSnackbar(
+                              '`${UpsertScreen.fullName.text}` Inserted Successfuly',
+                              true);
+                          clearForm();
+                          Navigator.pop(context);
+                        }
+                      } else {
+                        if (await Network.pustData(
+                            mobileNo: UpsertScreen.mobileNo.text,
+                            fullName: UpsertScreen.fullName.text,
+                            id: UpsertScreen.contactId)) {
+                          showSnackbar(
+                              '`${UpsertScreen.fullName.text}` Updated Successfuly',
+                              true);
+                          clearForm();
+                          Navigator.pop(context);
+                        }
+                      }
                     }
                   },
                   child: Row(
