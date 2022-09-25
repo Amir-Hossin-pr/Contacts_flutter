@@ -1,6 +1,8 @@
+import 'package:contacts/models/contact.dart';
 import 'package:contacts/screens/upsert_screen.dart';
 import 'package:contacts/utils/network.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -38,9 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
-                  MaterialPageRoute(builder: (builder) => const UpsertScreen()))
-              .then((value) async {
+          Get.toNamed('/upsert')?.then((value) async {
             await Network.getData();
             setState(() {});
           });
@@ -55,15 +55,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             trailing: IconButton(
               onPressed: () {
-                var contact = Network.contacts[index];
+                Contact contact = Network.contacts[index];
                 UpsertScreen.fullName.text = contact.fullName;
                 UpsertScreen.mobileNo.text = contact.mobileNo;
                 UpsertScreen.contactId = contact.id;
-                Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const UpsertScreen()))
-                    .then((value) async {
+                Get.toNamed('/upsert')?.then((value) async {
                   await Network.getData();
                   setState(() {});
                 });
