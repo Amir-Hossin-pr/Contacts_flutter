@@ -13,13 +13,9 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       getPages: [
         GetPage(
-            name: '/home',
-            page: () => const HomeScreen(),
-            binding: HomeBinding()),
+            name: '/home', page: () => HomeScreen(), binding: HomeBinding()),
         GetPage(
-            name: '/upsert',
-            page: () => const UpsertScreen(),
-            binding: HomeBinding())
+            name: '/upsert', page: () => UpsertScreen(), binding: HomeBinding())
       ],
       initialRoute: '/home',
     );
