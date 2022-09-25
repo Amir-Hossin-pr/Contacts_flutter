@@ -1,5 +1,5 @@
 import 'package:contacts/models/contact.dart';
-import 'package:contacts/screens/upsert_screen.dart';
+import 'package:contacts/views/upsert_screen.dart';
 import 'package:contacts/utils/network.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

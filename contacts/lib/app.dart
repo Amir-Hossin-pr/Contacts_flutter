@@ -1,6 +1,6 @@
 import 'package:contacts/bindings/home_binding.dart';
-import 'package:contacts/screens/home_screen.dart';
-import 'package:contacts/screens/upsert_screen.dart';
+import 'package:contacts/views/home_screen.dart';
+import 'package:contacts/views/upsert_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
