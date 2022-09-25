@@ -1,15 +1,14 @@
 import 'dart:convert';
 
 import 'package:contacts/models/contact.dart';
-import 'package:contacts/utils/network.dart';
 import 'package:get/state_manager.dart';
 import 'package:http/http.dart';
 
 class ContactsController extends GetxController {
   String baseURL = 'https://retoolapi.dev/qgQGp3/contacts';
 
-  List<Contact> contacts = <Contact>[];
-  Rx<Contact> currentContact = Contact(fullName: '', mobileNo: '', id: 0).obs;
+  RxList<Contact> contacts = <Contact>[].obs;
+  Rx<Contact> currentContact = Contact(fullName: '', mobileNo: '', id: -1).obs;
 
   Future<bool> insertContact(String fullName, String mobileNo) async {
     try {
@@ -46,7 +45,7 @@ class ContactsController extends GetxController {
 
   Future<bool> deleteContact(int id) async {
     try {
-      var response = await delete(Uri.parse('${baseURL}/${id}'));
+      var response = await delete(Uri.parse('$baseURL/$id'));
       return response.statusCode == 200;
     } catch (e) {
       return false;
@@ -54,6 +53,7 @@ class ContactsController extends GetxController {
   }
 
   Future<List<Contact>> getContacts() async {
+    contacts.clear();
     try {
       var response = await get(Uri.parse(baseURL));
       if (response.statusCode == 200) {
@@ -65,6 +65,11 @@ class ContactsController extends GetxController {
       }
       return contacts;
     } catch (e) {
+      contacts.add(Contact(fullName: 'fullName', mobileNo: 'mobileNo', id: 0));
+      contacts
+          .add(Contact(fullName: 'fullName 1', mobileNo: 'mobileNo 1', id: 1));
+      contacts
+          .add(Contact(fullName: 'fullName 2', mobileNo: 'mobileNo 2', id: 2));
       return contacts;
     }
   }
