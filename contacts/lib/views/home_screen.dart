@@ -1,4 +1,5 @@
 import 'package:contacts/controllers/contacts_controller.dart';
+import 'package:contacts/controllers/translate_controller.dart';
 import 'package:contacts/models/contact.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,7 @@ class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   final contactsController = Get.find<ContactsController>();
+  final trasnlateController = Get.find<TranslateController>();
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: const Icon(Icons.import_contacts_sharp),
-        title: const Text('Contacts Online'),
+        title: Text('title'.tr),
         actions: [
           IconButton(
               onPressed: () async {
@@ -23,13 +25,55 @@ class HomeScreen extends StatelessWidget {
               icon: const Icon(Icons.refresh))
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.toNamed('/upsert')?.then((value) async {
-            await contactsController.getContacts();
-          });
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            tooltip: 'changeLang'.tr,
+            onPressed: () {
+              Get.bottomSheet(Container(
+                color: Colors.white,
+                child: Wrap(children: [
+                  ListTile(
+                    leading: const Icon(Icons.abc),
+                    title: const Text('English'),
+                    onTap: () {
+                      trasnlateController.changeLanguage('en');
+                      Get.back();
+                      Get.snackbar(
+                          'Language Change', 'Language Changed Successfuly',
+                          icon: const Icon(Icons.translate),
+                          snackPosition: SnackPosition.BOTTOM,
+                          margin: const EdgeInsets.all(15));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.abc),
+                    title: const Text('فارسی'),
+                    onTap: () {
+                      trasnlateController.changeLanguage('fa');
+                      Get.back();
+                      Get.snackbar('تغییر زبان', 'زبان با موفقیت تغییر کرد',
+                          icon: const Icon(Icons.translate),
+                          snackPosition: SnackPosition.BOTTOM,
+                          margin: const EdgeInsets.all(15));
+                    },
+                  )
+                ]),
+              ));
+            },
+            child: const Icon(Icons.language),
+          ),
+          FloatingActionButton(
+            tooltip: 'createNew'.tr,
+            onPressed: () {
+              Get.toNamed('/upsert')?.then((value) async {
+                await contactsController.getContacts();
+              });
+            },
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
       body: Obx(() => ListView.builder(
             itemBuilder: (context, index) {
