@@ -2,7 +2,7 @@ import 'package:contacts/controllers/contacts_controller.dart';
 import 'package:contacts/models/contact.dart';
 import 'package:contacts/widgets/upsert/input_text.dart';
 import 'package:flutter/material.dart';
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 
 class UpsertScreen extends StatelessWidget {
   final TextEditingController fullName = TextEditingController();
@@ -62,12 +62,10 @@ class UpsertScreen extends StatelessWidget {
                       }
 
                       void showSnackbar(String message, bool success) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(
-                          message,
-                          style: TextStyle(
-                              color: success ? Colors.green : Colors.red),
-                        )));
+                        Get.snackbar('Action', message,
+                            icon: success
+                                ? Icon(Icons.check)
+                                : Icon(Icons.close));
                       }
 
                       if (formKey.currentState!.validate()) {
