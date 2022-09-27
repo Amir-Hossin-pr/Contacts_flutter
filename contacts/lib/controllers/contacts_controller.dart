@@ -45,7 +45,8 @@ class ContactsController extends GetxController {
 
   Future<bool> deleteContact(int id) async {
     try {
-      var response = await delete(Uri.parse('$baseURL/$id'));
+      var url = '$baseURL/$id';
+      var response = await delete(Uri.parse(url));
       return response.statusCode == 200;
     } catch (e) {
       return false;
@@ -65,11 +66,6 @@ class ContactsController extends GetxController {
       }
       return contacts;
     } catch (e) {
-      contacts.add(Contact(fullName: 'fullName', mobileNo: 'mobileNo', id: 0));
-      contacts
-          .add(Contact(fullName: 'fullName 1', mobileNo: 'mobileNo 1', id: 1));
-      contacts
-          .add(Contact(fullName: 'fullName 2', mobileNo: 'mobileNo 2', id: 2));
       return contacts;
     }
   }
