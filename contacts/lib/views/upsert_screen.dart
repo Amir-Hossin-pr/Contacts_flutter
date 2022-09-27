@@ -39,14 +39,14 @@ class UpsertScreen extends StatelessWidget {
             body: Column(
               children: [
                 InputOutline(
-                    hint: 'نام و نام خانوادگی',
-                    lable: 'نام و نام خانوادگی',
-                    errorText: 'لطفا نام را وارد کنید',
+                    hint: 'fullName'.tr,
+                    lable: 'fullName'.tr,
+                    errorText: 'fullNameRequired'.tr,
                     controller: fullName),
                 InputOutline(
-                    hint: 'موبایل',
-                    lable: 'شماره موبایل',
-                    errorText: 'لطفا شماره موبایل را وارد کنید',
+                    hint: 'mobileNo'.tr,
+                    lable: 'mobileNo'.tr,
+                    errorText: 'mobileRequired'.tr,
                     inputTtype: TextInputType.phone,
                     controller: mobileNo),
                 Padding(
@@ -95,9 +95,9 @@ class UpsertScreen extends StatelessWidget {
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text('ثبت مخاطب'),
-                        Icon(Icons.save),
+                      children: [
+                        Text('save'.tr),
+                        const Icon(Icons.save),
                       ],
                     ),
                   ),
