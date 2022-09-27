@@ -10,6 +10,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    contactsController.getContacts();
     return Scaffold(
       appBar: AppBar(
         leading: const Icon(Icons.import_contacts_sharp),
@@ -49,77 +50,42 @@ class HomeScreen extends StatelessWidget {
                 title: Text(contactsController.contacts[index].fullName),
                 subtitle: Text(contactsController.contacts[index].mobileNo),
                 onTap: () {
-                  var contact = contactsController.contacts[index];
-                  showDialog(
-                      context: context,
-                      builder: (builder) => AlertDialog(
-                            actionsAlignment: MainAxisAlignment.center,
-                            icon: const Icon(Icons.delete),
-                            title: const Text('Delete Contact'),
-                            content: Text(
-                                'Are you sure to delete `${contact.fullName}` ?'),
-                            actions: [
-                              Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    var contact =
-                                        contactsController.contacts[index];
-                                    if (await contactsController
-                                        .deleteContact(contact.id)) {
-                                      Navigator.pop(context);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  'User ${contact.fullName} Deleted Successfuly',
-                                                  style: const TextStyle(
-                                                      color: Colors.green))));
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(
-                                        'User ${contact.fullName} Not Deleted',
-                                        style:
-                                            const TextStyle(color: Colors.red),
-                                      )));
-                                    }
-                                    await contactsController.getContacts();
-                                  },
-                                  style: ButtonStyle(
-                                      padding: MaterialStateProperty.all(
-                                          const EdgeInsets.all(10)),
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.red)),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text('Delete'),
-                                      Icon(Icons.delete)
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  style: ButtonStyle(
-                                      padding: MaterialStateProperty.all(
-                                          const EdgeInsets.all(10))),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text('Cancle'),
-                                      Icon(Icons.cancel)
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ],
-                          ));
+                  Contact contact = contactsController.contacts[index];
+                  Get.defaultDialog(
+                      title: 'Delete Contact',
+                      middleText:
+                          'Are you sure to delete `${contact.fullName}`?',
+                      textConfirm: 'Yes',
+                      confirmTextColor: Colors.white,
+                      textCancel: 'No',
+                      onCancel: () {
+                        Get.back();
+                      },
+                      onConfirm: () async {
+                        var contact = contactsController.contacts[index];
+                        if (await contactsController
+                            .deleteContact(contact.id)) {
+                          Get.back();
+
+                          Get.snackbar('Success',
+                              'User ${contact.fullName} Deleted Successfuly',
+                              icon: const Icon(Icons.check),
+                              isDismissible: true,
+                              margin: const EdgeInsets.all(10),
+                              snackPosition: SnackPosition.BOTTOM);
+
+                          await contactsController.getContacts();
+                        } else {
+                          Get.back();
+
+                          Get.snackbar(
+                              'Error', 'User ${contact.fullName} Not Deleted',
+                              icon: const Icon(Icons.error),
+                              isDismissible: true,
+                              margin: const EdgeInsets.all(10),
+                              snackPosition: SnackPosition.BOTTOM);
+                        }
+                      });
                 },
               );
             },
