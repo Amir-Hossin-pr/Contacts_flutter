@@ -30,7 +30,7 @@ class UpsertScreen extends StatelessWidget {
                 onPressed: () {
                   contactsController.currentContact.value =
                       Contact(fullName: '', mobileNo: '', id: -1);
-                  Navigator.pop(context);
+                  Get.back();
                 },
                 icon: const Icon(Icons.arrow_back),
               ),
@@ -64,27 +64,31 @@ class UpsertScreen extends StatelessWidget {
                       void showSnackbar(String message, bool success) {
                         Get.snackbar('Action', message,
                             icon: success
-                                ? Icon(Icons.check)
-                                : Icon(Icons.close));
+                                ? const Icon(Icons.check)
+                                : const Icon(Icons.close),
+                            barBlur: 2,
+                            isDismissible: true,
+                            margin: const EdgeInsets.all(10),
+                            snackPosition: SnackPosition.BOTTOM);
                       }
 
                       if (formKey.currentState!.validate()) {
                         if (contactId == -1) {
                           if (await contactsController.insertContact(
                               fullName.text, mobileNo.text)) {
+                            Get.back();
                             showSnackbar(
                                 '`${fullName.text}` Inserted Successfuly',
                                 true);
                             clearForm();
-                            Navigator.pop(context);
                           }
                         } else {
                           if (await contactsController.updateContact(
                               contactId, fullName.text, mobileNo.text)) {
+                            Get.back();
                             showSnackbar(
                                 '`${fullName.text}` Updated Successfuly', true);
                             clearForm();
-                            Navigator.pop(context);
                           }
                         }
                       }
